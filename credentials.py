@@ -1,15 +1,10 @@
 import logging
 import requests
 import json
-import os
-import hashlib
 import apikey
 from static import *
-import hmac
-import random
-import time
 from requests_oauthlib import OAuth1
-from requests_oauthlib import OAuth1Session
+
 
 
 """ get credentials from flickr"""
@@ -33,7 +28,7 @@ def signature(url, param_dict, token_secret = "",  http_verb = "GET", debug = Tr
     print(sig)
     return sig
 
-
+""" get provitional token before authentication """
 def getRequestToken(debug=True):
     #prefills all the parameters for getting the request token
     oauth = OAuth1(apikey.KEY, client_secret=apikey.SECRET, signature_type = 'query',  callback_uri='http://example.com')
@@ -44,7 +39,13 @@ def getRequestToken(debug=True):
         logging.debug("Firing request token query")
     if (debug):
         logging.debug("Request token status:" + str(r.status_code))
-        print("Request token status:" + str(r.status_code))
 
     if (r.status_code == requests.codes.OK):
         print("OK")
+
+    return 0
+
+
+""" get the user authorization """
+def getAuthorisation(debug= True):
+    pass

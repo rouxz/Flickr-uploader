@@ -221,3 +221,19 @@ INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1):
 DEBUG:requests.packages.urllib3.connectionpool:"GET /services/oauth/request_token?oauth_nonce=42439711585096294851458235745&oauth_timestamp=1458235745&oauth_version=1.0&oauth_signature_method=HMAC-SHA1&oauth_consumer_key=506b7323f92fb1b694c00abdf3eb44f0&oauth_callback=http%3A%2F%2Fexample.com&oauth_signature=HOgge2DFcT5n3cY5X3bmU2b7hu0%3D HTTP/1.1" 200 112
 DEBUG:root:Firing request token query
 DEBUG:root:Request token status:200
+INFO:root:Flickr uploader started   
+DEBUG:requests_oauthlib.oauth1_auth:Signing request <PreparedRequest [GET]> using client <Client client_secret=****, nonce=None, timestamp=None, rsa_key=None, resource_owner_secret=None, callback_uri=http://example.com, decoding=utf-8, signature_type=QUERY, resource_owner_key=None, verifier=None, signature_method=HMAC-SHA1, client_key=506b7323f92fb1b694c00abdf3eb44f0, encoding=utf-8, realm=None>
+DEBUG:requests_oauthlib.oauth1_auth:Including body in call to sign: False
+DEBUG:oauthlib.oauth1.rfc5849:Collected params: [('oauth_nonce', '45488145528123259561458247305'), ('oauth_timestamp', '1458247305'), ('oauth_version', '1.0'), ('oauth_signature_method', 'HMAC-SHA1'), ('oauth_consumer_key', '506b7323f92fb1b694c00abdf3eb44f0'), ('oauth_callback', 'http://example.com')]
+DEBUG:oauthlib.oauth1.rfc5849:Normalized params: oauth_callback=http%3A%2F%2Fexample.com&oauth_consumer_key=506b7323f92fb1b694c00abdf3eb44f0&oauth_nonce=45488145528123259561458247305&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1458247305&oauth_version=1.0
+DEBUG:oauthlib.oauth1.rfc5849:Normalized URI: https://www.flickr.com/services/oauth/request_token
+DEBUG:oauthlib.oauth1.rfc5849:Base signing string: GET&https%3A%2F%2Fwww.flickr.com%2Fservices%2Foauth%2Frequest_token&oauth_callback%3Dhttp%253A%252F%252Fexample.com%26oauth_consumer_key%3D506b7323f92fb1b694c00abdf3eb44f0%26oauth_nonce%3D45488145528123259561458247305%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1458247305%26oauth_version%3D1.0
+DEBUG:oauthlib.oauth1.rfc5849:Signature: sV8VFTaysO1setRabgHkxgD1Ang=
+DEBUG:oauthlib.oauth1.rfc5849:Encoding URI, headers and body to utf-8.
+DEBUG:requests_oauthlib.oauth1_auth:Updated url: https://www.flickr.com/services/oauth/request_token?oauth_nonce=45488145528123259561458247305&oauth_timestamp=1458247305&oauth_version=1.0&oauth_signature_method=HMAC-SHA1&oauth_consumer_key=506b7323f92fb1b694c00abdf3eb44f0&oauth_callback=http%3A%2F%2Fexample.com&oauth_signature=sV8VFTaysO1setRabgHkxgD1Ang%3D
+DEBUG:requests_oauthlib.oauth1_auth:Updated headers: {b'Accept': b'*/*', b'User-Agent': b'python-requests/2.7.0 CPython/3.5.0 Darwin/14.0.0', b'Accept-Encoding': b'gzip, deflate', b'Connection': b'keep-alive'}
+DEBUG:requests_oauthlib.oauth1_auth:Updated body: None
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): www.flickr.com
+DEBUG:requests.packages.urllib3.connectionpool:"GET /services/oauth/request_token?oauth_nonce=45488145528123259561458247305&oauth_timestamp=1458247305&oauth_version=1.0&oauth_signature_method=HMAC-SHA1&oauth_consumer_key=506b7323f92fb1b694c00abdf3eb44f0&oauth_callback=http%3A%2F%2Fexample.com&oauth_signature=sV8VFTaysO1setRabgHkxgD1Ang%3D HTTP/1.1" 200 109
+DEBUG:root:Firing request token query
+DEBUG:root:Request token status:200
