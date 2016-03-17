@@ -1,29 +1,50 @@
+import logging
 import requests
 import json
 import os
 import hashlib
+import apikey
+from static import *
+import hmac
+import random
+import time
+from requests_oauthlib import OAuth1
+from requests_oauthlib import OAuth1Session
+
 
 """ get credentials from flickr"""
 
 """Calculate the signature for flickr from a dictionnary of all parameters"""
 """ return it as a hexadecimal value"""
-def signature(dict):
+""" param_dict is a dictionnary of all parameters
+    url is the type of url that will be called
+    token is the token_secret by default is empty
+    http_verb is the verb of the query , default is GET"""
 
-    concat = ""
-    for key, value in sorted(dict.items()): # Note the () after items!
-        concat = concat + key + str(value)
-
+def signature(url, param_dict, token_secret = "",  http_verb = "GET", debug = True):
+    """ calculate the signature based on HMAC-SHA1 """
+    key = bytes(apikey.SECRET + "&" + token_secret, 'utf-8')
+    txt = http_verb + "&" + url
+    for k, v in sorted(param_dict.items()):
+        txt = txt + "&" +  k + "=" + str(v)
+    print(bytes(txt, 'utf-8'))
     #Calculate the md5 hash
-    sig = hashlib.md5(bytes(concat, 'utf-8')).hexdigest()
+    sig = hmac.new(key, msg = bytes(txt, 'utf-8'), digestmod = 'SHA1').hexdigest()
+    print(sig)
     return sig
 
 
-def getRequestToken():
-    param_dict = {"oauth_nonce":95613465, \
-        "oauth_timestamp": 1305586162, \
-        "oauth_consumer_key": "653e7a6ecc1d528c516cc8f92cf98611" , \
-        "oauth_signature_method":"HMAC-SHA1",
-        "oauth_version":"1.0",\
-        "oauth_signature":7w18YS2bONDPL%2FzgyzP5XTr5af4%3D,\
-        "oauth_callback":"http%3A%2F%2Fwww.example.com}",\
-    }
+def getRequestToken(debug=True):
+    #prefills all the parameters for getting the request token
+    oauth = OAuth1(apikey.KEY, client_secret=apikey.SECRET, signature_type = 'query',  callback_uri='http://example.com')
+    r = requests.get(url=OAUTH_ENDPOINT + OAUTH_REQUEST_TOKEN_SERVICE, auth=oauth)
+
+    # #send request to server
+    if (debug):
+        logging.debug("Firing request token query")
+    if (debug):
+        logging.debug("Request token status:" + str(r.status_code))
+        print("Request token status:" + str(r.status_code))
+
+    if (r.status_code == requests.codes.OK):
+        print("OK")
