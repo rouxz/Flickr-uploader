@@ -1,6 +1,8 @@
 from static import *
 import credentials
 import logging
+import server
+import json
 
 def main():
     print(LINE)
@@ -11,10 +13,13 @@ def main():
     logging.basicConfig(filename='log.log', level=logging.DEBUG)
     logging.info(NAME + " started   ")
 
-    #Signature test
-    print("Request token for connection")
-    credentials.getRequestToken()
 
+
+
+    credential = credentials.Credentials()
 
 if __name__ == "__main__":
-    main()
+    # main()
+    # f = open(VERIFIER_JSON, 'wb')
+    with open(VERIFIER_JSON, 'wb') as f:
+        json.dumps({'a':'a'}, f, indent=4)

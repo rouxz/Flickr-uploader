@@ -4,48 +4,72 @@ import json
 import apikey
 from static import *
 from requests_oauthlib import OAuth1
-
-
+import urllib
+import webbrowser
+import server
+import threading
 
 """ get credentials from flickr"""
+class Credentials:
 
-"""Calculate the signature for flickr from a dictionnary of all parameters"""
-""" return it as a hexadecimal value"""
-""" param_dict is a dictionnary of all parameters
-    url is the type of url that will be called
-    token is the token_secret by default is empty
-    http_verb is the verb of the query , default is GET"""
+    def __init__(self, debug=True):
+        self.debug = debug
+        #get query token
+        if (self.debug):
+            print("Request token for connection")
+        self.access_token = self.getRequestToken()
 
-def signature(url, param_dict, token_secret = "",  http_verb = "GET", debug = True):
-    """ calculate the signature based on HMAC-SHA1 """
-    key = bytes(apikey.SECRET + "&" + token_secret, 'utf-8')
-    txt = http_verb + "&" + url
-    for k, v in sorted(param_dict.items()):
-        txt = txt + "&" +  k + "=" + str(v)
-    print(bytes(txt, 'utf-8'))
-    #Calculate the md5 hash
-    sig = hmac.new(key, msg = bytes(txt, 'utf-8'), digestmod = 'SHA1').hexdigest()
-    print(sig)
-    return sig
+        #create a thread launching a webserver to wait for the callback verifier
+        thread_server = threading.Thread(target=server.setServer)
+        thread_server.deamon = True
+        thread_server.start()
 
-""" get provitional token before authentication """
-def getRequestToken(debug=True):
-    #prefills all the parameters for getting the request token
-    oauth = OAuth1(apikey.KEY, client_secret=apikey.SECRET, signature_type = 'query',  callback_uri='http://example.com')
-    r = requests.get(url=OAUTH_ENDPOINT + OAUTH_REQUEST_TOKEN_SERVICE, auth=oauth)
+        #get access token
+        if (self.debug):
+            print("Request access token ")
+        self.authorization = self.getAuthorisationToken()
 
-    # #send request to server
-    if (debug):
-        logging.debug("Firing request token query")
-    if (debug):
-        logging.debug("Request token status:" + str(r.status_code))
-
-    if (r.status_code == requests.codes.OK):
-        print("OK")
-
-    return 0
+        #verifier is empty
+        self.verifier = ""
 
 
-""" get the user authorization """
-def getAuthorisation(debug= True):
-    pass
+
+    """ get provitional token before authentication """
+    def getRequestToken(self):
+        #prefills all the parameters for getting the request token
+        oauth = OAuth1(apikey.KEY, client_secret=apikey.SECRET, signature_type = 'query',  callback_uri='http://127.0.0.1:8000')
+
+
+        # #send request to server
+        if (self.debug):
+            logging.debug("Firing request token query")
+        r = requests.get(url=OAUTH_ENDPOINT + OAUTH_REQUEST_TOKEN_SERVICE, auth=oauth)
+
+        #get status of the request
+        if (self.debug):
+            logging.debug("Request token status:" + str(r.status_code))
+
+        #parse the information received if everything is alright
+        if (r.status_code == requests.codes.OK):
+            credentials = urllib.parse.parse_qs(r.content)
+            self.resource_owner_key = credentials[bytes('oauth_token','utf-8')][0]
+            self.resource_owner_secret = credentials[bytes('oauth_token_secret','utf-8')][0]
+
+            logging.info("Request token obtained")
+
+
+    """ get the user authorization """
+    """ it requires input from request token """
+    def getAuthorisationToken(self):
+        # #send authorization to server
+        if (self.debug):
+            logging.debug("Opening browser for allowing the app")
+
+        # r = requests.get(url=OAUTH_ENDPOINT + OAUTH_USER_AUTHORISATION_SERVICE, params=params)
+        webbrowser.open(OAUTH_ENDPOINT + OAUTH_USER_AUTHORISATION_SERVICE + "/?oauth_token=" + self.resource_owner_key.decode("utf-8"))
+
+
+    """ get the access token and store it """
+
+    def getAccessToken(self):
+        pass
